@@ -132,7 +132,7 @@ abstract class Report
         return $className . '-' . $this->filters->filters()['start_date'] . '-' . $this->filters->filters()['end_date'];
     }
 
-    public function export($type = 'xls')
+    public function export($type = 'xls', $pagination = 50)
     {
         if (! $this->reportExporter) {
             return $this->download();   //TODO: Remove this, this is used for the UsersReport that doesn't have exporter yet
@@ -140,7 +140,9 @@ abstract class Report
         if ($type == 'xls') {
             return $this->getExporter()->toXls($this->query())->download($this->getExportName());
         } elseif ($type == 'html') {
-            return $this->getExporter()->toHtml($this->query()->paginate(50));
+            return $this->getExporter()->toHtml($this->query()->paginate($pagination));
+        } elseif ($type == 'api') {
+            return $this->getExporter()->toApi($this->query()->paginate($pagination));
         } elseif ($type == 'fake') {
             return $this->getExporter($this->getFilters())->toFake($this->query()->get());
         }
