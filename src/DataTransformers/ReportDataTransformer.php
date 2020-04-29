@@ -2,6 +2,8 @@
 
 namespace BadChoice\Reports\DataTransformers;
 
+use BadChoice\Mojito\Exceptions\UnitsNotCompatibleException;
+
 class ReportDataTransformer
 {
     public static function make($type)
@@ -14,8 +16,11 @@ class ReportDataTransformer
 
     public static function transform($row, $field, $value, $transformation, $transformData = null)
     {
-        $transformed = static::applyTransformation($row, $field, $value, $transformation, $transformData);
-        return $transformed;
+        try {
+            return static::applyTransformation($row, $field, $value, $transformation, $transformData);
+        } catch (UnitsNotCompatibleException $e) {
+            return 0;
+        }
         //return static::applyLabel($transformed, $object, $field);
     }
 
